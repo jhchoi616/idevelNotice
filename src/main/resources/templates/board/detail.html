@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layout/header :: head('${board.title}')}"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/detail.css}">
+</head>
+<body>
+<header th:replace="~{layout/header :: header}"></header>
+<div class="board-detail">
+
+    <!-- 게시판 이름 -->
+    <div class="board-category"
+         th:text="${board.category}">
+        DATA
+    </div>
+
+    <!-- 제목 -->
+    <h1 th:text="${board.title}">
+        게시글 제목
+    </h1>
+
+    <!-- 작성자 / 조회수 / 날짜 -->
+    <div class="board-info">
+        <span>
+            작성자:
+            <strong th:text="${board.writer.nickname}">닉네임</strong>
+        </span>
+
+        <span>
+            조회수:
+            <strong th:text="${board.viewCount}">0</strong>
+        </span>
+
+        <span th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')}">
+            2026-09-09 19:00
+        </span>
+    </div>
+
+    <hr>
+
+    <!-- 본문 -->
+    <div class="board-content"
+         th:text="${board.content}">
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- 첨부파일 -->
+    <!-- ========================= -->
+
+    <div class="file-section"
+         th:if="${board.category.name() == 'DATA' and !#lists.isEmpty(files)}">
+
+        <h3>첨부파일</h3>
+
+        <div class="file-list">
+
+            <div class="file-item"
+                 th:each="file : ${files}">
+
+                <!-- 이미지 미리보기 -->
+                <div th:if="${file.contentType != null
+             and #strings.startsWith(file.contentType, 'image/')}">
+
+    <img th:src="@{/uploads/board/{filename}(filename=${file.storedFileName})}"
+         th:alt="${file.originalFileName}"
+         class="attached-image">
+
+</div>
+
+                <!-- 파일 정보 -->
+                <div class="file-info">
+
+                    <span th:text="${file.originalFileName}">
+                        image.png
+                    </span>
+
+                    <span th:text="${#numbers.formatDecimal(file.fileSize / 1024.0, 1, 1) + ' KB'}">
+                        100 KB
+                    </span>
+
+                    <a th:href="@{/uploads/board/{filename}(filename=${file.storedFileName})}"
+                       th:download="${file.originalFileName}">
+                        다운로드
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- 댓글 -->
+    <!-- ========================= -->
+
+    <div class="comment-section">
+
+        <h3>
+            댓글
+            <span th:text="${#lists.size(comments)}">0</span>
+        </h3>
+
+
+        <!-- 댓글 목록 -->
+        <div class="comment-list">
+
+            <div class="comment-item"
+                 th:each="comment : ${comments}">
+
+                <div class="comment-header">
+
+                    <strong th:text="${comment.writer.nickname}">
+                        닉네임
+                    </strong>
+
+                    <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">
+                        2026-09-09 19:00
+                    </span>
+
+                </div>
+
+                <div class="comment-content"
+                     th:text="${comment.content}">
+                    댓글 내용
+                </div>
+
+            </div>
+
+
+            <!-- 댓글이 없는 경우 -->
+            <div th:if="${#lists.isEmpty(comments)}"
+                 class="no-comment">
+                아직 댓글이 없습니다.
+            </div>
+
+        </div>
+
+
+        <!-- 댓글 작성 -->
+        <div class="comment-write"
+             sec:authorize="isAuthenticated()">
+
+            <form th:action="@{/board/{category}/{id}/comment(
+                        category=${board.category.name().toLowerCase()},
+                        id=${board.id}
+                    )}"
+                  method="post">
+
+                <textarea name="content"
+                          maxlength="300"
+                          placeholder="댓글을 입력해주세요."></textarea>
+
+                <button type="submit">
+                    댓글 등록
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- 로그인하지 않은 경우 -->
+        <div sec:authorize="isAnonymous()"
+             class="login-comment">
+
+            <a th:href="@{/login}">
+                로그인 후 댓글을 작성할 수 있습니다.
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- 목록으로 -->
+    <div class="board-buttons">
+
+        <a th:href="@{/board/{category}(
+                    category=${board.category.name().toLowerCase()}
+                )}">
+            목록
+        </a>
+
+    </div>
+
+</div>
+<footer th:replace="~{layout/footer :: footer}"></footer>
+</body>
+</html>

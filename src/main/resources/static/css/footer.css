@@ -1,0 +1,24 @@
+footer {
+    margin-top: 80px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+}
+
+.footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 35px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer-logo {
+    font-weight: 700;
+}
+
+.footer-info {
+    color: #888;
+    font-size: 13px;
+}

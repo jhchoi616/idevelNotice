@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+
+
+<!-- =========================
+     HEAD
+     ========================= -->
+<head th:fragment="head(title)">
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${title}">
+        MyBoard
+    </title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/common.css}">
+
+    <link rel="stylesheet"
+          th:href="@{/css/board.css}">
+          
+
+</head>
+
+
+<body>
+
+<!-- =========================
+     HEADER
+     ========================= -->
+<header th:fragment="header"
+        class="site-header">
+
+    <div class="header-inner">
+
+        <!-- Logo -->
+        <a th:href="@{/}"
+           class="logo">
+            MyBoard
+        </a>
+
+
+        <!-- Desktop Navigation -->
+        <nav class="main-nav">
+
+            <a th:href="@{/}">
+                홈
+            </a>
+
+            <a th:href="@{/board/free}">
+                자유게시판
+            </a>
+
+            <a th:href="@{/board/question}">
+                질문게시판
+            </a>
+
+            <a th:href="@{/board/info}">
+                정보게시판
+            </a>
+
+            <a th:href="@{/board/data}">
+                자료실
+            </a>
+
+        </nav>
+
+
+        <!-- Desktop User Menu -->
+        <div class="user-menu">
+
+            <th:block sec:authorize="!isAuthenticated()">
+
+    <a th:href="@{/login}" class="login-link">
+        로그인
+    </a>
+
+    <a th:href="@{/signup}" class="signup-button">
+        회원가입
+    </a>
+
+</th:block>
+
+<th:block sec:authorize="isAuthenticated()">
+
+    <a th:href="@{/mypage}" class="login-link">
+        마이페이지
+    </a>
+    <a th:href="@{/board/write}">
+        <button class="write-button">
+            글쓰기
+        </button>
+    </a>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="logout-button">
+            로그아웃
+        </button>
+    </form>
+
+</th:block>
+
+        </div>
+
+
+        <!-- Mobile Menu Button -->
+        <button type="button"
+                class="mobile-menu-button"
+                id="mobileMenuButton"
+                aria-label="메뉴 열기">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+    </div>
+
+
+    <!-- Mobile Navigation -->
+    <aside class="mobile-menu"
+           id="mobileMenu">
+
+        <div class="mobile-menu-header">
+
+            <strong>
+                Menu
+            </strong>
+
+            <button type="button"
+                    class="mobile-menu-close"
+                    id="mobileMenuClose"
+                    aria-label="메뉴 닫기">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <nav class="mobile-nav">
+
+            <a th:href="@{/}">
+                홈
+            </a>
+
+            <a th:href="@{/board/free}">
+                자유게시판
+            </a>
+
+            <a th:href="@{/board/question}">
+                질문게시판
+            </a>
+
+            <a th:href="@{/board/info}">
+                정보게시판
+            </a>
+
+            <a th:href="@{/board/data}">
+                자료실
+            </a>
+
+        </nav>
+
+
+        <div class="mobile-user-menu">
+
+            <th:block th:if="${session.loginUser == null}">
+
+                <a th:href="@{/login}" class="login-link">
+                    로그인
+                </a>
+
+                <a th:href="@{/signup}" class="signup-button">
+                    회원가입
+                </a>
+
+            </th:block>
+
+            <th:block th:unless="${session.loginUser == null}">
+
+                <a th:href="@{/mypage}" class="login-link">
+                    마이페이지
+                </a>
+                <a th:href="@{/board/write}">
+                        <button class="write-button">
+                            글쓰기
+                        </button>
+                </a>
+                <a th:href="@{/logout}" class="logout-button">
+                    로그아웃
+                </a>
+
+            </th:block>
+
+        </div>
+
+    </aside>
+
+
+    <!-- Overlay -->
+    <div class="mobile-overlay"
+         id="mobileOverlay">
+    </div>
+<script>
+    const menuButton =
+        document.getElementById("mobileMenuButton");
+
+    const menuClose =
+        document.getElementById("mobileMenuClose");
+
+    const mobileMenu =
+        document.getElementById("mobileMenu");
+
+    const overlay =
+        document.getElementById("mobileOverlay");
+
+
+    function openMenu() {
+
+        mobileMenu.classList.add("active");
+        overlay.classList.add("active");
+
+        document.body.classList.add("menu-open");
+    }
+
+
+    function closeMenu() {
+
+        mobileMenu.classList.remove("active");
+        overlay.classList.remove("active");
+
+        document.body.classList.remove("menu-open");
+    }
+
+
+    menuButton.addEventListener("click", openMenu);
+
+    menuClose.addEventListener("click", closeMenu);
+
+    overlay.addEventListener("click", closeMenu);
+</script>
+</header>
+</body>
+</html>

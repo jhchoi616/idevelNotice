@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layout/header :: head('글쓰기')}"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/write.css}">
+    <script th:src="@{/js/board-write.js}" defer></script>
+</head>
+
+<body>
+
+<header th:replace="~{layout/header :: header}"></header>
+
+<main class="board-write-container">
+
+    <div class="board-write">
+
+        <div class="board-write-header">
+            <h1>글 작성</h1>
+            <p>게시글을 작성해주세요.</p>
+        </div>
+
+
+        <form id="writeForm"
+              th:action="@{/board/write}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <!-- CSRF -->
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+
+            <!-- 카테고리 -->
+            <div class="form-group">
+
+                <label for="category">카테고리</label>
+
+                <select id="category"
+                        name="category"
+                        required>
+
+                    <option value="">카테고리를 선택해주세요.</option>
+
+                    <option value="FREE"
+                            th:selected="${category == 'FREE'}">
+                        자유게시판
+                    </option>
+
+                    <option value="QUESTION"
+                            th:selected="${category == 'QUESTION'}">
+                        질문게시판
+                    </option>
+
+                    <option value="DATA"
+                            th:selected="${category == 'DATA'}">
+                        자료실
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- 제목 -->
+            <div class="form-group">
+
+                <label for="title">제목</label>
+                <input type="text" id="title" name="title" maxlength="10" placeholder="제목을 입력해주세요. (최대 10자)" required>
+                <div class="input-info"> <span id="titleMessage"></span> <span> <strong id="titleCount">0</strong> / 10 </span> </div>
+
+            </div>
+
+
+            <!-- 내용 -->
+            <div class="form-group">
+
+                <label for="content">내용</label> 
+                <textarea id="content" name="content" maxlength="300" placeholder="내용을 입력해주세요. (최대 300자)" required></textarea>
+                <div class="input-info"> <span id="contentMessage"></span> <span> <strong id="contentCount">0</strong> / 300 </span> </div>
+
+            </div>
+
+
+            <!-- 파일 업로드 -->
+            <div id="fileUploadGroup"
+                 class="form-group file-upload-group"
+                 hidden>
+
+                <div class="file-upload-header">
+
+                    <div>
+                        <label>이미지 첨부</label>
+
+                        <p>
+                            자료실 게시글에만 이미지를 첨부할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <span class="file-limit">
+                        파일당 10MB · 전체 20MB
+                    </span>
+
+                </div>
+
+
+                <!-- Drag & Drop 영역 -->
+                <div id="dropZone"
+                     class="drop-zone">
+
+                    <div class="drop-zone-content">
+
+                        <div class="upload-icon">
+                            ↑
+                        </div>
+
+                        <p class="drop-title">
+                            이미지를 이곳에 끌어다 놓으세요.
+                        </p>
+
+                        <p class="drop-description">
+                            또는 아래 버튼을 눌러 파일을 선택하세요.
+                        </p>
+
+                        <button type="button"
+                                id="fileSelectButton"
+                                class="file-select-button">
+                            파일 선택
+                        </button>
+
+                        <p class="allowed-file">
+                            JPG · JPEG · PNG · GIF · WEBP
+                        </p>
+
+                    </div>
+
+                    <input type="file"
+                           id="fileInput"
+                           name="files"
+                           accept="image/jpeg,image/png,image/gif,image/webp"
+                           multiple
+                           hidden>
+
+                </div>
+<!-- 파일 업로드 오류 메시지 -->
+<div id="fileError" class="file-error" hidden> </div>
+                <!-- 파일 목록 -->
+                <div id="fileList"
+                     class="file-list">
+                </div>
+
+
+                <!-- 용량 표시 -->
+                <div class="file-total">
+
+                    <span>
+                        선택한 파일
+                        <strong id="fileCount">0</strong>개
+                    </span>
+
+                    <span>
+                        총 용량
+                        <strong id="totalSize">0 MB</strong>
+                        / 20 MB
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- 버튼 -->
+            <div class="write-buttons">
+
+                <a th:href="@{/}"
+                   class="btn btn-cancel">
+                    취소
+                </a>
+
+                <button type="submit"
+                        class="btn btn-submit">
+                    등록
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+<footer th:replace="~{layout/footer :: footer}"></footer>
+
+</body>
+</html>

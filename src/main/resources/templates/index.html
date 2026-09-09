@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layout/header :: head('게시판')}">
+</head>
+
+
+<body>
+
+<header th:replace="~{layout/header :: header}">
+</header>
+
+
+<main class="home">
+
+    <!-- =========================
+         Hero
+         ========================= -->
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="hero-badge">
+                MYBOARD COMMUNITY
+            </span>
+
+            <h1>
+                자유롭게 이야기하고<br>
+                <strong>함께 정보를 나누세요.</strong>
+            </h1>
+
+            <p>
+                일상의 이야기부터 개발에 관한 질문과 정보까지<br>
+                다양한 이야기를 자유롭게 공유할 수 있습니다.
+            </p>
+
+            <div class="hero-actions">
+
+                <a th:href="@{/board/free}"
+                   class="button button-primary">
+                    자유게시판 둘러보기
+                </a>
+
+                <a th:href="@{/board/write}"
+                   class="button button-secondary">
+                    글쓰기
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="home-content">
+
+
+        <!-- =========================
+             Trending / 인기글
+             ========================= -->
+        <section class="issue-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        TRENDING
+                    </span>
+
+                    <h2>
+                        지금 많이 이야기되는 글
+                    </h2>
+
+                    <p>
+                        최근 관심을 받고 있는 게시글입니다.
+                    </p>
+
+                </div>
+
+                <a th:href="@{/board}"
+                   class="more-link">
+
+                    전체보기
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+
+            <div class="issue-list">
+
+                <a th:each="board : ${popularBoards}"
+                   th:href="@{/board/{id}(id=${board.id})}"
+                   class="issue-item">
+
+                    <span class="issue-rank"
+                          th:text="${#numbers.formatInteger(boardStat.index + 1, 2)}">
+                        01
+                    </span>
+
+                    <div class="issue-info">
+
+                        <span class="issue-category"
+                              th:text="${board.category}">
+                            자유게시판
+                        </span>
+
+                        <strong th:text="${board.title}">
+                            게시글 제목
+                        </strong>
+
+                        <span class="issue-meta">
+
+                            <span th:text="${board.writer}">
+                                홍길동
+                            </span>
+
+                            · 조회
+                            <span th:text="${board.viewCount}">
+                                128
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                </a>
+
+
+                <!-- 인기글이 없을 때 -->
+                <div th:if="${#lists.isEmpty(popularBoards)}"
+                     class="empty-home">
+
+                    아직 인기 게시글이 없습니다.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             자유게시판
+             ========================= -->
+        <section class="featured-board">
+
+            <div class="featured-header">
+
+                <div>
+
+                    <span class="section-label">
+                        FREE BOARD
+                    </span>
+
+                    <h2>
+                        자유게시판
+                    </h2>
+
+                    <p>
+                        일상부터 다양한 주제의 이야기를 자유롭게 나눠보세요.
+                    </p>
+
+                </div>
+
+                <a th:href="@{/board/free}"
+                   class="more-link">
+
+                    더보기
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+
+            <div class="featured-posts">
+
+                <a th:each="board, stat : ${freeBoards}"
+                   th:href="@{/board/{id}(id=${board.id})}"
+                   class="featured-post">
+
+                    <div class="post-number"
+                         th:text="${#numbers.formatInteger(stat.index + 1, 2)}">
+                        01
+                    </div>
+
+                    <div class="post-content">
+
+                        <h3 th:text="${board.title}">
+                            게시글 제목
+                        </h3>
+
+                        <p th:text="${board.content}">
+                            게시글 내용
+                        </p>
+
+                        <span class="post-meta">
+
+                            <span th:text="${board.writer}">
+                                홍길동
+                            </span>
+
+                            ·
+
+                            <span th:text="${#temporals.format(board.createdAt, 'MM.dd')}">
+                                09.09
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                    <span class="post-arrow">
+                        →
+                    </span>
+
+                </a>
+
+
+                <div th:if="${#lists.isEmpty(freeBoards)}"
+                     class="empty-home">
+
+                    등록된 자유게시글이 없습니다.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             질문 / 정보
+             ========================= -->
+        <section class="board-grid">
+
+
+            <!-- 질문게시판 -->
+            <article class="board-card">
+
+                <div class="board-card-header">
+
+                    <div>
+
+                        <span class="board-icon question">
+                            ?
+                        </span>
+
+                        <div class="board-card-title">
+
+                            <span class="section-label">
+                                QUESTION
+                            </span>
+
+                            <h2>
+                                질문게시판
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                    <a th:href="@{/board/question}"
+                       class="card-more">
+                        →
+                    </a>
+
+                </div>
+
+
+                <p class="board-description">
+                    궁금한 내용을 질문하고<br>
+                    다른 사람들과 답을 찾아보세요.
+                </p>
+
+
+                <div class="mini-post-list">
+
+                    <a th:each="board : ${questionBoards}"
+                       th:href="@{/board/{id}(id=${board.id})}"
+                       class="mini-post">
+
+                        <span th:text="${board.title}">
+                            Spring Boot 질문입니다.
+                        </span>
+
+                        <time th:text="${#temporals.format(board.createdAt, 'MM.dd')}">
+                            09.09
+                        </time>
+
+                    </a>
+
+
+                    <div th:if="${#lists.isEmpty(questionBoards)}"
+                         class="mini-empty">
+
+                        등록된 질문이 없습니다.
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- 정보게시판 -->
+            <article class="board-card">
+
+                <div class="board-card-header">
+
+                    <div>
+
+                        <span class="board-icon info">
+                            i
+                        </span>
+
+                        <div class="board-card-title">
+
+                            <span class="section-label">
+                                INFORMATION
+                            </span>
+
+                            <h2>
+                                정보게시판
+                            </h2>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                    <a th:href="@{/board/info}"
+                    class="card-more">
+                    →
+                </a>
+                
+            </div>
+            
+
+                <p class="board-description">
+                    유용한 정보와 개발 자료를<br>
+                    자유롭게 공유해보세요.
+                </p>
+
+
+                <div class="mini-post-list">
+
+                    <a th:each="board : ${infoBoards}"
+                       th:href="@{/board/{id}(id=${board.id})}"
+                       class="mini-post">
+
+                        <span th:text="${board.title}">
+                            Spring Boot 개발 팁 정리
+                        </span>
+
+                        <time th:text="${#temporals.format(board.createdAt, 'MM.dd')}">
+                            09.09
+                        </time>
+
+                    </a>
+
+
+                    <div th:if="${#lists.isEmpty(infoBoards)}"
+                         class="mini-empty">
+
+                        등록된 정보글이 없습니다.
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+
+        <!-- =========================
+             공지사항
+             ========================= -->
+        <section class="notice-section">
+
+            <div class="notice-header">
+
+                <div class="notice-title">
+
+                    <span class="notice-icon">
+                        !
+                    </span>
+
+                    <div>
+
+                        <span class="section-label">
+                            NOTICE
+                        </span>
+
+                        <h2>
+                            공지사항
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <a th:href="@{/notice}"
+                   class="more-link">
+
+                    더보기
+                    <span>→</span>
+
+                </a>
+
+            </div>
+
+
+            <div class="notice-list">
+
+                <a th:each="notice : ${notices}"
+                   th:href="@{/notice/{id}(id=${notice.id})}"
+                   class="notice-item">
+
+                    <strong th:text="${notice.title}">
+                        게시판 이용 안내
+                    </strong>
+
+                    <time th:text="${#temporals.format(notice.createdAt, 'MM.dd')}">
+                        09.09
+                    </time>
+
+                </a>
+
+
+                <div th:if="${#lists.isEmpty(notices)}"
+                     class="mini-empty">
+
+                    등록된 공지사항이 없습니다.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </section>
+
+</main>
+
+
+<footer th:replace="~{layout/footer :: footer}">
+</footer>
+
+</body>
+</html>

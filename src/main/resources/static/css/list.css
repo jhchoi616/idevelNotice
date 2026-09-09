@@ -1,0 +1,305 @@
+/* ========================================
+   게시판
+======================================== */
+
+.board-container {
+    width: 1100px;
+    max-width: calc(100% - 40px);
+    margin: 0 auto;
+    padding: 60px 0 80px;
+}
+
+
+/* 게시판 제목 */
+
+.board-header {
+    margin-bottom: 35px;
+}
+
+.board-header h1 {
+    margin: 0 0 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.board-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 15px;
+}
+
+
+/* 검색 */
+
+.board-search {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.board-search form {
+    display: flex;
+    gap: 8px;
+}
+
+.board-search select,
+.board-search input {
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.board-search select {
+    width: 100px;
+    padding: 0 10px;
+}
+
+.board-search input {
+    width: 350px;
+    padding: 0 14px;
+}
+
+.board-search input::placeholder {
+    color: #9ca3af;
+}
+
+.board-search select:focus,
+.board-search input:focus {
+    outline: none;
+    border-color: #111827;
+}
+
+.board-search button {
+    height: 42px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 6px;
+    background: #111827;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.board-search button:hover {
+    background: #1f2937;
+}
+
+
+/* 게시글 목록 */
+
+.board-list {
+    width: 100%;
+    border-top: 2px solid #111827;
+}
+
+.board-list table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.board-list th {
+    height: 52px;
+    background: #f9fafb;
+    border-bottom: 1px solid #d1d5db;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.board-list td {
+    height: 54px;
+    padding: 0 12px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #4b5563;
+    font-size: 14px;
+    text-align: center;
+}
+
+
+/* 열 너비 */
+
+.board-list th:nth-child(1),
+.board-list td:nth-child(1) {
+    width: 80px;
+}
+
+.board-list th:nth-child(2),
+.board-list td:nth-child(2) {
+    width: auto;
+    text-align: left;
+}
+
+.board-list th:nth-child(3),
+.board-list td:nth-child(3) {
+    width: 130px;
+}
+
+.board-list th:nth-child(4),
+.board-list td:nth-child(4) {
+    width: 90px;
+}
+
+.board-list th:nth-child(5),
+.board-list td:nth-child(5) {
+    width: 120px;
+}
+
+
+/* 제목 */
+
+.board-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.board-title a {
+    color: #111827;
+    text-decoration: none;
+}
+
+.board-title a:hover {
+    text-decoration: underline;
+}
+
+.board-title span {
+    margin-left: 6px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+
+/* 게시글 없음 */
+
+.empty-board {
+    height: 180px !important;
+    color: #9ca3af !important;
+    text-align: center !important;
+}
+
+
+/* 하단 */
+
+.board-bottom {
+    position: relative;
+    min-height: 50px;
+    margin-top: 25px;
+}
+
+
+/* 글쓰기 버튼 */
+
+
+.write-button a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 6px;
+    background: #111827;
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.write-button a:hover {
+    background: #1f2937;
+}
+
+
+/* 페이징 */
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+}
+
+.pagination a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    color: #6b7280;
+    background: white;
+    font-size: 13px;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.pagination a:hover {
+    border-color: #9ca3af;
+    color: #111827;
+}
+
+.pagination a.active {
+    border-color: #111827;
+    background: #111827;
+    color: white;
+}
+
+
+/* ========================================
+   모바일
+======================================== */
+
+@media (max-width: 768px) {
+
+    .board-container {
+        width: auto;
+        max-width: none;
+        margin: 0 20px;
+        padding: 40px 0 60px;
+    }
+
+    .board-header h1 {
+        font-size: 26px;
+    }
+
+    .board-search form {
+        width: 100%;
+    }
+
+    .board-search select {
+        width: 80px;
+    }
+
+    .board-search input {
+        flex: 1;
+        width: auto;
+    }
+
+    .board-list {
+        overflow-x: auto;
+    }
+
+    .board-list table {
+        min-width: 700px;
+    }
+
+    .board-bottom {
+        min-height: 95px;
+    }
+
+    .write-button {
+        position: static;
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+
+}

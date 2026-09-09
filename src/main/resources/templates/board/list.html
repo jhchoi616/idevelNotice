@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout/header :: head('${category.displayName}')}"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/css/list.css}">
+</head>
+
+<body>
+
+<!-- Header -->
+<header th:replace="~{layout/header :: header}"></header>
+
+
+<main class="board-container">
+
+    <!-- 게시판 제목 -->
+    <section class="board-header">
+
+        <h1 th:text="${category.displayName}">
+            게시판
+        </h1>
+        
+        <p th:switch="${category}">
+            <span th:case="${T(com.idevel.notice.entity.BoardCategory).FREE}">
+                자유롭게 이야기를 나눌 수 있는 공간입니다.
+            </span>
+
+            <span th:case="${T(com.idevel.notice.entity.BoardCategory).INFO}">
+                유용한 정보를 공유하는 공간입니다.
+            </span>
+
+            <span th:case="${T(com.idevel.notice.entity.BoardCategory).DATA}">
+                사이트의 공지사항을 확인할 수 있습니다.
+            </span>
+
+            <span th:case="${T(com.idevel.notice.entity.BoardCategory).QUESTION}">
+                궁금한 내용을 질문하고 답변받을 수 있는 공간입니다.
+            </span>
+        </p>
+
+    </section>
+
+
+    <!-- 검색 -->
+    <section class="board-search">
+
+        <form th:action="@{/board/{category}(category=${category})}"
+              method="get">
+
+            <select name="type">
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="writer">작성자</option>
+            </select>
+
+            <input type="text"
+                   name="keyword"
+                   placeholder="검색어를 입력하세요">
+
+            <button type="submit">
+                검색
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- 게시글 목록 -->
+    <section class="board-list">
+
+        <table>
+
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>조회수</th>
+                <th>작성일</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <!-- 게시글이 존재하는 경우 -->
+            <tr th:each="board : ${boards}">
+
+                <td th:text="${board.id}">
+                    1
+                </td>
+
+                <td class="board-title">
+
+                    <a th:href="@{/board/{category}/{id}(category=${category.name().toLowerCase()},id=${board.id})}"
+                       th:text="${board.title}">
+                        게시글 제목
+                    </a>
+
+                    댓글 수
+                    <span th:if="${board.commentCount != null}"
+                          th:text="'[' + ${board.commentCount} + ']'">
+                    </span>
+
+                </td>
+
+                <td th:text="${board.nickname}">
+                    작성자
+                </td>
+
+                <td th:text="${board.viewCount}">
+                    0
+                </td>
+
+                <td th:text="${#temporals.format(board.createdAt, 'yyyy-MM-dd')}">
+                    2026-09-09
+                </td>
+
+            </tr>
+
+
+            <!-- 게시글이 없는 경우 -->
+            <tr th:if="${#lists.isEmpty(boards)}">
+
+                <td colspan="5" class="empty-board">
+                    등록된 게시글이 없습니다.
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+    <!-- 하단 영역 -->
+    <section class="board-bottom">
+
+        <!-- 글쓰기 상단 헤더로 올라감 사용x -->
+        <!-- <div class="write-button">
+
+            <a th:href="@{/board/{category}/write(category=${category})}"
+               sec:authorize="isAuthenticated()">
+
+                글쓰기
+
+            </a>
+
+        </div> -->
+
+
+        <!-- 페이징 -->
+        <div class="pagination">
+
+            <!-- 이전 -->
+            <a th:if="${page != null and page.hasPrevious()}"
+               th:href="@{/board/{category}(
+                    category=${category},
+                    page=${page.number - 1}
+               )}">
+                이전
+            </a>
+
+
+            <!-- 페이지 번호 -->
+            <th:block th:if="${page != null}">
+
+                <a th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - 1)}"
+                   th:href="@{/board/{category}(
+                        category=${category},
+                        page=${pageNumber}
+                   )}"
+                   th:text="${pageNumber + 1}"
+                   th:classappend="${pageNumber == page.number} ? 'active' : ''">
+
+                    1
+
+                </a>
+
+            </th:block>
+
+
+            <!-- 다음 -->
+            <a th:if="${page != null and page.hasNext()}"
+               th:href="@{/board/{category}(
+                    category=${category},
+                    page=${page.number + 1}
+               )}">
+                다음
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- Footer -->
+<footer th:replace="~{layout/footer :: footer}"></footer>
+
+</body>
+</html>
