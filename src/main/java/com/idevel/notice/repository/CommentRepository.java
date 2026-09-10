@@ -10,4 +10,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByBoardIdOrderByCreatedAtAsc(Long boardId);
 
     long countByBoardId(Long boardId);
+
+    // 게시글 삭제시 댓글 전체 삭제
+    void deleteAllByBoardId(Long boardId);
 }

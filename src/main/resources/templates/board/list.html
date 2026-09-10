@@ -2,7 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{layout/header :: head('${category.displayName}')}"></head>
+<head th:replace="~{layout/header :: head(${category.displayName})}"></head>
 <head>
     <link rel="stylesheet" th:href="@{/css/list.css}">
 </head>
@@ -86,9 +86,9 @@
             <tbody>
 
             <!-- 게시글이 존재하는 경우 -->
-            <tr th:each="board : ${boards}">
+            <tr th:each="board,stat : ${boards}">
 
-                <td th:text="${board.id}">
+                <td th:text="${page.totalElements - (page.number * page.size) - stat.index}">
                     1
                 </td>
 
@@ -154,10 +154,10 @@
 
 
         <!-- 페이징 -->
-        <div class="pagination">
+        <div class="pagination" th:if="${page != null and page.totalPages > 0}">
 
             <!-- 이전 -->
-            <a th:if="${page != null and page.hasPrevious()}"
+            <a th:if="${page.hasPrevious()}"
                th:href="@{/board/{category}(
                     category=${category},
                     page=${page.number - 1}
@@ -167,10 +167,9 @@
 
 
             <!-- 페이지 번호 -->
-            <th:block th:if="${page != null}">
+            <th:block th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - 1)}">
 
-                <a th:each="pageNumber : ${#numbers.sequence(0, page.totalPages - 1)}"
-                   th:href="@{/board/{category}(
+                <a th:href="@{/board/{category}(
                         category=${category},
                         page=${pageNumber}
                    )}"
@@ -185,7 +184,7 @@
 
 
             <!-- 다음 -->
-            <a th:if="${page != null and page.hasNext()}"
+            <a th:if="${page.hasNext()}"
                th:href="@{/board/{category}(
                     category=${category},
                     page=${page.number + 1}

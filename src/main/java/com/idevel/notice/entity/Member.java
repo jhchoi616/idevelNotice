@@ -92,4 +92,12 @@ public class Member {
     this.nickname = nickname;
     this.email = email;
 }
+
+
+// 회원정보 수정
+public void updateInfo(String nickname, String email) {
+    this.nickname = nickname;
+    this.email = email;
+}
+
 }

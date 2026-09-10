@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -211,10 +212,216 @@ public class BoardFileService {
                 );
     }
 
+    // 파일 단건 삭제
     @Transactional
     public void delete(Long fileId) {
-        BoardFile boardFile = findById(fileId);
-
+        BoardFile boardFile = findById(fileId);//파일 아이디로 하나씩 삭제
+        deletePhysicalFile(boardFile);
         boardFileRepository.delete(boardFile);
     }
+
+    // 게시글 카테고리 수정 및 삭제로 인해서 파일 삭제할때 => 그런데 이미 casCade걸어둬서 쓸일 없을듯
+    @Transactional
+    public void deleteAllByBoard(Board board) {
+
+        List<BoardFile> files =
+                boardFileRepository.findByBoardIdOrderBySortOrderAsc(
+                        board.getId()
+                );
+
+        for (BoardFile file : files) {
+
+            deletePhysicalFile(file);
+
+            boardFileRepository.delete(file);
+        }
+    }
+
+
+    // 파일 업로드 수정
+    @Transactional
+public void updateFiles(
+        Board board,
+        MultipartFile[] newFiles,
+        List<Long> deletedFileIds
+) {
+    
+    LocalDateTime now = LocalDateTime.now();
+    System.out.println("여기에 파일 수정 없어도 돌지 않나?"+now);
+    List<BoardFile> existingFiles =
+            boardFileRepository.findByBoardIdOrderBySortOrderAsc(
+                    board.getId()
+            );
+
+
+    /*
+     * 삭제할 파일 ID
+     */
+    if (deletedFileIds != null && !deletedFileIds.isEmpty()) {
+
+        for (BoardFile file : existingFiles) {
+
+            if (deletedFileIds.contains(file.getId())) {
+
+                deletePhysicalFile(file);
+
+                boardFileRepository.delete(file);
+            }
+        }
+    }
+
+
+    /*
+     * 삭제되지 않고 남아있는 기존 파일의 총 용량
+     */
+    long totalSize = 0;
+
+    for (BoardFile file : existingFiles) {
+
+        if (deletedFileIds != null
+                && deletedFileIds.contains(file.getId())) {
+            continue;
+        }
+
+        totalSize += file.getFileSize();
+    }
+
+
+    /*
+     * 새 파일 용량 검사
+     */
+    if (newFiles != null) {
+
+        for (MultipartFile file : newFiles) {
+
+            if (file == null || file.isEmpty()) {
+                continue;
+            }
+
+            if (file.getSize() > MAX_FILE_SIZE) {
+                throw new IllegalArgumentException(
+                        "파일당 최대 10MB까지 업로드할 수 있습니다."
+                );
+            }
+
+            validateImage(file);
+
+            totalSize += file.getSize();
+        }
+    }
+
+
+    /*
+     * 기존 파일 + 새 파일
+     * 전체 용량 검사
+     */
+    if (totalSize > MAX_TOTAL_SIZE) {
+
+        throw new IllegalArgumentException(
+                "전체 파일 용량은 20MB를 초과할 수 없습니다."
+        );
+    }
+
+
+    /*
+     * 새 파일 저장
+     */
+    if (newFiles == null || newFiles.length == 0) {
+        return;
+    }
+
+
+    /*
+     * 기존 파일의 마지막 sortOrder 확인
+     */
+    int sortOrder = existingFiles.stream()
+            .filter(file ->
+                    deletedFileIds == null
+                            || !deletedFileIds.contains(file.getId())
+            )
+            .mapToInt(BoardFile::getSortOrder)
+            .max()
+            .orElse(-1) + 1;
+
+
+    Path uploadDirectory = Paths.get(uploadPath);
+
+    try {
+        Files.createDirectories(uploadDirectory);
+    } catch (IOException e) {
+
+        throw new RuntimeException(
+                "파일 저장 폴더를 생성할 수 없습니다.",
+                e
+        );
+    }
+
+
+    /*
+     * 실제 새 파일 저장
+     */
+    for (MultipartFile file : newFiles) {
+
+        if (file == null || file.isEmpty()) {
+            continue;
+        }
+
+        String originalFileName =
+                file.getOriginalFilename();
+
+        String extension =
+                getExtension(originalFileName);
+
+        String storedFileName =
+                UUID.randomUUID() + extension;
+
+        Path targetPath =
+                uploadDirectory.resolve(storedFileName);
+
+        try {
+
+            file.transferTo(targetPath);
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(
+                    "파일 저장에 실패했습니다.",
+                    e
+            );
+        }
+
+
+        BoardFile boardFile = new BoardFile(
+                board,
+                originalFileName,
+                storedFileName,
+                targetPath.toString(),
+                file.getSize(),
+                file.getContentType(),
+                sortOrder++
+        );
+        System.out.println("===================================================");
+System.out.println("여기에 파일 수정 없어도 돌지 않나? - 끝"+now);
+        boardFileRepository.save(boardFile);
+    }
 }
+// 실제 파일 삭제
+private void deletePhysicalFile(BoardFile boardFile) {
+
+    Path filePath = Paths.get(boardFile.getFilePath());
+
+    try {
+
+        Files.deleteIfExists(filePath);
+
+    } catch (IOException e) {
+
+        throw new RuntimeException(
+                "첨부파일 삭제에 실패했습니다.",
+                e
+        );
+    }
+}
+
+}
+

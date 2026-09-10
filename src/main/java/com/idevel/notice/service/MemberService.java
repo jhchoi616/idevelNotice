@@ -1,6 +1,7 @@
 package com.idevel.notice.service;
 
 import com.idevel.notice.dto.MemberSignupRequest;
+import com.idevel.notice.dto.MemberUpdateRequest;
 import com.idevel.notice.entity.Member;
 import com.idevel.notice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -74,4 +75,32 @@ public class MemberService {
 
         return memberRepository.save(member);
     }
+
+
+    @Transactional
+    public void updateInfo(
+            Long memberId,
+            MemberUpdateRequest request
+    ) {
+        Member member = findById(memberId);
+
+        if (!member.getEmail().equals(request.getEmail())
+                && memberRepository.existsByEmail(request.getEmail())) {
+
+            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+        }
+        System.out.println("=========================내정보 수정 : " + request.getNickname());
+        System.out.println("? 내정보 수정 여기 옴??" + request.getEmail());
+        
+
+        member.updateInfo(
+                request.getNickname(),
+                request.getEmail()
+        );
+
+        System.out.println("멤버 업데이트 후 : "+member.getNickname());
+        System.out.println("멤버 업데이트 후 : "+member.getEmail());
+        
+    }
+
 }

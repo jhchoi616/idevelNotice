@@ -95,7 +95,7 @@
             <div class="issue-list">
 
                 <a th:each="board : ${popularBoards}"
-                   th:href="@{/board/{id}(id=${board.id})}"
+                   th:href="@{/board/{category}/{id}(id=${board.id}, category=${board.category.name().toLowerCase()})}"
                    class="issue-item">
 
                     <span class="issue-rank"
@@ -106,7 +106,7 @@
                     <div class="issue-info">
 
                         <span class="issue-category"
-                              th:text="${board.category}">
+                              th:text="${board.category.getDisplayName()}">
                             자유게시판
                         </span>
 
@@ -116,7 +116,7 @@
 
                         <span class="issue-meta">
 
-                            <span th:text="${board.writer}">
+                            <span th:text="${board.writer.nickname}">
                                 홍길동
                             </span>
 
@@ -182,8 +182,8 @@
 
             <div class="featured-posts">
 
-                <a th:each="board, stat : ${freeBoards}"
-                   th:href="@{/board/{id}(id=${board.id})}"
+                <a th:each="board, stat : ${frees}"
+                   th:href="@{/board/free/{id}(id=${board.id})}"
                    class="featured-post">
 
                     <div class="post-number"
@@ -197,7 +197,9 @@
                             게시글 제목
                         </h3>
 
-                        <p th:text="${board.content}">
+                        <p th:text="${board.content != null && board.content.length() > 15 
+        ? board.content.substring(0, 15) + '...' 
+        : board.content}">
                             게시글 내용
                         </p>
 
@@ -224,7 +226,7 @@
                 </a>
 
 
-                <div th:if="${#lists.isEmpty(freeBoards)}"
+                <div th:if="${frees.content.isEmpty()}"
                      class="empty-home">
 
                     등록된 자유게시글이 없습니다.
@@ -284,8 +286,8 @@
 
                 <div class="mini-post-list">
 
-                    <a th:each="board : ${questionBoards}"
-                       th:href="@{/board/{id}(id=${board.id})}"
+                    <a th:each="board : ${questions}"
+                       th:href="@{/board/question/{id}(id=${board.id})}"
                        class="mini-post">
 
                         <span th:text="${board.title}">
@@ -299,7 +301,7 @@
                     </a>
 
 
-                    <div th:if="${#lists.isEmpty(questionBoards)}"
+                    <div th:if="${questions.content.isEmpty()}"
                          class="mini-empty">
 
                         등록된 질문이 없습니다.
@@ -353,8 +355,8 @@
 
                 <div class="mini-post-list">
 
-                    <a th:each="board : ${infoBoards}"
-                       th:href="@{/board/{id}(id=${board.id})}"
+                    <a th:each="board : ${infos}"
+                       th:href="@{/board/info/{id}(id=${board.id})}"
                        class="mini-post">
 
                         <span th:text="${board.title}">
@@ -368,7 +370,7 @@
                     </a>
 
 
-                    <div th:if="${#lists.isEmpty(infoBoards)}"
+                    <div th:if="${infos.content.isEmpty()}"
                          class="mini-empty">
 
                         등록된 정보글이 없습니다.
@@ -386,68 +388,68 @@
         <!-- =========================
              공지사항
              ========================= -->
-        <section class="notice-section">
+<section class="resource-section">
 
-            <div class="notice-header">
+    <div class="resource-header">
 
-                <div class="notice-title">
+        <div class="resource-title">
 
-                    <span class="notice-icon">
-                        !
-                    </span>
+            <span class="resource-icon">
+                +
+            </span>
 
-                    <div>
+            <div>
 
-                        <span class="section-label">
-                            NOTICE
-                        </span>
+                <span class="section-label">
+                    RESOURCE
+                </span>
 
-                        <h2>
-                            공지사항
-                        </h2>
-
-                    </div>
-
-                </div>
-
-                <a th:href="@{/notice}"
-                   class="more-link">
-
-                    더보기
-                    <span>→</span>
-
-                </a>
+                <h2>
+                    자료실
+                </h2>
 
             </div>
 
+        </div>
 
-            <div class="notice-list">
+        <a th:href="@{/resource}"
+           class="more-link">
 
-                <a th:each="notice : ${notices}"
-                   th:href="@{/notice/{id}(id=${notice.id})}"
-                   class="notice-item">
+            더보기
+            <span>→</span>
 
-                    <strong th:text="${notice.title}">
-                        게시판 이용 안내
-                    </strong>
+        </a>
 
-                    <time th:text="${#temporals.format(notice.createdAt, 'MM.dd')}">
-                        09.09
-                    </time>
-
-                </a>
+    </div>
 
 
-                <div th:if="${#lists.isEmpty(notices)}"
-                     class="mini-empty">
+    <div class="resource-list">
 
-                    등록된 공지사항이 없습니다.
+        <a th:each="resource : ${datas}"
+           th:href="@{/board/data/{id}(id=${resource.id})}"
+           class="resource-item">
 
-                </div>
+            <strong th:text="${resource.title}">
+                자료실 게시글
+            </strong>
 
-            </div>
+            <time th:text="${#temporals.format(resource.createdAt, 'MM.dd')}">
+                09.09
+            </time>
 
-        </section>
+        </a>
+
+
+        <div th:if="${datas.content.isEmpty()}"
+             class="mini-empty">
+
+            등록된 자료가 없습니다.
+
+        </div>
+
+    </div>
+
+</section>
 
 
     </section>

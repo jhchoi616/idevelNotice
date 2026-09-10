@@ -113,4 +113,9 @@ public class Comment {
         this.content = content;
         this.secret = secret;
     }
+
+    public void update(String content) {
+    this.content = content;
+}
+
 }

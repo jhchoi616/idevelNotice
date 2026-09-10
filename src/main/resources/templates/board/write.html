@@ -24,15 +24,19 @@
 
 
         <form id="writeForm"
-              th:action="@{/board/write}"
-              method="post"
-              enctype="multipart/form-data">
+      th:action="${board != null
+          ? '/board/' + board.id + '/edit'
+          : '/board/write'}"
+      method="post"
+      enctype="multipart/form-data"
+      th:attr="data-mode=${board != null ? 'edit' : 'write'}"
+      novalidate
+      >
 
             <!-- CSRF -->
             <input type="hidden"
                    th:name="${_csrf.parameterName}"
                    th:value="${_csrf.token}">
-
 
             <!-- 카테고리 -->
             <div class="form-group">
@@ -55,6 +59,11 @@
                         질문게시판
                     </option>
 
+                    <option value="INFO"
+                            th:selected="${category == 'INFO'}">
+                        정보게시판
+                    </option>
+
                     <option value="DATA"
                             th:selected="${category == 'DATA'}">
                         자료실
@@ -69,7 +78,7 @@
             <div class="form-group">
 
                 <label for="title">제목</label>
-                <input type="text" id="title" name="title" maxlength="10" placeholder="제목을 입력해주세요. (최대 10자)" required>
+                <input type="text" id="title" name="title" maxlength="10" placeholder="제목을 입력해주세요. (최대 10자)" th:value="${board != null ? board.title : ''}" required>
                 <div class="input-info"> <span id="titleMessage"></span> <span> <strong id="titleCount">0</strong> / 10 </span> </div>
 
             </div>
@@ -79,7 +88,7 @@
             <div class="form-group">
 
                 <label for="content">내용</label> 
-                <textarea id="content" name="content" maxlength="300" placeholder="내용을 입력해주세요. (최대 300자)" required></textarea>
+                <textarea id="content" name="content" maxlength="300" placeholder="내용을 입력해주세요. (최대 300자)" th:text="${board != null ? board.content : ''}" required></textarea>
                 <div class="input-info"> <span id="contentMessage"></span> <span> <strong id="contentCount">0</strong> / 300 </span> </div>
 
             </div>
@@ -89,7 +98,60 @@
             <div id="fileUploadGroup"
                  class="form-group file-upload-group"
                  hidden>
+            <div class="existing-file-section"
+     th:if="${board != null and board.category.name() == 'DATA' and files != null and !files.isEmpty()}">
 
+    <div class="file-upload-header">
+        <div>
+            <label>기존 첨부파일</label>
+            <p>
+                현재 게시글에 첨부된 이미지입니다.
+            </p>
+        </div>
+    </div>
+
+    <div id="existingFileList"
+         class="file-list">
+
+        <div class="file-item existing-file-item"
+             th:each="file : ${files}"
+             th:id="'existing-file-' + ${file.id}"
+             th:attr="data-file-id=${file.id},data-file-size=${file.fileSize}">
+
+            <!-- 이미지 미리보기 -->
+            <div class="file-preview">
+
+                <img th:src="@{/uploads/board/{filename}(filename=${file.storedFileName})}"
+                     th:alt="${file.originalFileName}">
+            </div>
+
+            <!-- 파일 정보 -->
+            <div class="file-info">
+
+                <div class="file-name"
+                     th:text="${file.originalFileName}">
+                    image.png
+                </div>
+
+                <div class="file-size"
+                     th:text="${#numbers.formatDecimal(file.fileSize / 1024.0 / 1024.0, 1, 2)} + ' MB'">
+                    1.25 MB
+                </div>
+
+            </div>
+
+            <!-- 삭제 버튼 -->
+            <button type="button"
+                    class="file-remove existing-file-remove"
+                    th:attr="data-file-id=${file.id}">
+                삭제
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
                 <div class="file-upload-header">
 
                     <div>
@@ -181,12 +243,14 @@
                 </a>
 
                 <button type="submit"
-                        class="btn btn-submit">
+                        class="btn btn-submit"
+                        th:text="${board != null ? '수정':'등록'}">
                     등록
                 </button>
 
             </div>
-
+            <!-- 파일 삭제 존 -->
+            <div id="deletedFileIds"></div>
         </form>
 
     </div>

@@ -1,0 +1,279 @@
+/* ==============================
+   내 정보
+   ============================== */
+
+.mypage-container {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 60px 20px;
+}
+
+
+/* 헤더 */
+
+.mypage-header {
+    margin-bottom: 35px;
+}
+
+.mypage-header h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+    font-weight: 700;
+    color: #222;
+}
+
+.mypage-header p {
+    margin: 0;
+    font-size: 15px;
+    color: #777;
+}
+
+
+/* 수정 완료 메시지 */
+
+.mypage-success {
+    margin-bottom: 25px;
+    padding: 14px 18px;
+    border: 1px solid #cfe5d5;
+    border-radius: 6px;
+    background: #f1f8f3;
+    color: #2f7d46;
+    font-size: 14px;
+}
+
+
+/* 폼 */
+
+.mypage-form {
+    width: 100%;
+    padding: 35px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+
+/* 입력 그룹 */
+
+.mypage-form .form-group {
+    margin-bottom: 28px;
+}
+
+.mypage-form .form-group:last-of-type {
+    margin-bottom: 0;
+}
+
+
+/* 라벨 */
+
+.mypage-form label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+
+/* 입력창 */
+
+.mypage-form input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid #d8d8d8;
+    border-radius: 5px;
+    background: #fff;
+    box-sizing: border-box;
+
+    font-family: inherit;
+    font-size: 15px;
+    color: #333;
+
+    outline: none;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+
+/* 포커스 */
+
+.mypage-form input:focus {
+    border-color: #555;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+
+/* 아이디 - 읽기 전용 */
+
+.mypage-form input[readonly] {
+    background: #f6f6f6;
+    color: #777;
+    cursor: not-allowed;
+}
+
+
+/* 설명 */
+
+.mypage-form small {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #888;
+}
+
+
+/* 필드 에러 */
+
+.mypage-form .field-error {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #d93025;
+}
+
+
+/* 버튼 영역 */
+
+.mypage-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* 공통 버튼 */
+
+.mypage-form .form-actions button,
+.mypage-form .form-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 44px;
+    padding: 0 22px;
+
+    border-radius: 5px;
+    box-sizing: border-box;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* 수정 버튼 */
+
+.mypage-form .btn-submit {
+    border: 1px solid #222;
+    background: #222;
+    color: #fff;
+}
+
+.mypage-form .btn-submit:hover {
+    background: #444;
+    border-color: #444;
+}
+
+
+/* 취소 버튼 */
+
+.mypage-form .btn-cancel {
+    border: 1px solid #d5d5d5;
+    background: #fff;
+    color: #555;
+}
+
+.mypage-form .btn-cancel:hover {
+    background: #f7f7f7;
+}
+
+
+/* ==============================
+   비밀번호 영역
+   ============================== */
+
+.password-section {
+    margin-top: 30px;
+    padding: 30px 35px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.password-section h2 {
+    margin: 0 0 10px;
+    font-size: 19px;
+    color: #222;
+}
+
+.password-section p {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #777;
+}
+
+.password-section .btn-password {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 42px;
+    padding: 0 18px;
+
+    border: 1px solid #d5d5d5;
+    border-radius: 5px;
+
+    background: #fff;
+    color: #444;
+
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.password-section .btn-password:hover {
+    background: #f7f7f7;
+}
+
+
+/* ==============================
+   모바일
+   ============================== */
+
+@media (max-width: 600px) {
+
+    .mypage-container {
+        padding: 40px 16px;
+    }
+
+    .mypage-header h1 {
+        font-size: 26px;
+    }
+
+    .mypage-form {
+        padding: 25px 20px;
+    }
+
+    .mypage-form .form-actions {
+        justify-content: stretch;
+    }
+
+    .mypage-form .form-actions button,
+    .mypage-form .form-actions a {
+        flex: 1;
+        padding: 0 12px;
+    }
+
+    .password-section {
+        padding: 25px 20px;
+    }
+}

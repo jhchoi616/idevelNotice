@@ -277,7 +277,7 @@
     margin-top: 30px;
 }
 
-.board-buttons a {
+.board-buttons a, button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -293,8 +293,9 @@
     box-sizing: border-box;
 }
 
-.board-buttons a:hover {
+.board-buttons a,button:hover {
     background: #f8f9fa;
+    cursor:pointer;
 }
 
 
@@ -343,4 +344,96 @@
     .comment-write button {
         width: 100%;
     }
+}
+
+
+
+
+/* 댓글 css 부분 */
+/* 댓글 작성자 + 버튼 */
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.comment-writer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-actions form {
+    margin: 0;
+}
+
+.comment-edit-btn,
+.comment-delete-btn {
+    padding: 4px 7px;
+    border: 0;
+    background: transparent;
+    color: #868e96;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.comment-edit-btn:hover,
+.comment-delete-btn:hover {
+    color: #343a40;
+}
+
+
+/* 댓글 수정 */
+
+.comment-edit-form {
+    margin-top: 10px;
+}
+
+.comment-edit-form textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 7px;
+    box-sizing: border-box;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.comment-edit-form textarea:focus {
+    outline: none;
+    border-color: #868e96;
+}
+
+.comment-edit-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.comment-edit-buttons button {
+    padding: 7px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background: white;
+    color: #495057;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.comment-edit-buttons button[type="submit"] {
+    border-color: #343a40;
+    background: #343a40;
+    color: white;
 }

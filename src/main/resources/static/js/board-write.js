@@ -72,7 +72,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedFiles = [];
 
-
+    // 삭제하려는 파일들
+    let deletedFileIds = new Set();
     /*
      * 제목 글자 수
      */
@@ -473,10 +474,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getTotalSize() {
 
-        return selectedFiles.reduce(
-            (total, file) => total + file.size,
-            0
-        );
+        return getExistingFileTotalSize()
+         + selectedFiles.reduce(
+                (total, file) => total + file.size,
+                0
+           );
     }
 
 
@@ -485,14 +487,22 @@ document.addEventListener("DOMContentLoaded", () => {
      */
 
     function updateFileInfo() {
+    const existingCount = document.querySelectorAll(".existing-file-item:not([data-deleted='true'])").length;
 
-        const total = getTotalSize();
+    const totalCount = existingCount + selectedFiles.length;
 
-        fileCount.textContent =
-            selectedFiles.length;
+    const total = getTotalSize();
 
-        totalSize.textContent =
-            formatFileSize(total);
+    fileCount.textContent = totalCount;
+
+    totalSize.textContent = formatFileSize(total);
+        // const total = getTotalSize();
+
+        // fileCount.textContent =
+        //     selectedFiles.length;
+
+        // totalSize.textContent =
+        //     formatFileSize(total);
     }
 
 
@@ -518,11 +528,9 @@ document.addEventListener("DOMContentLoaded", () => {
      */
 
     form.addEventListener("submit", (event) => {
-
         /*
          * 제목 검증
          */
-
         if (title.value.trim().length === 0) {
 
             event.preventDefault();
@@ -637,4 +645,82 @@ document.addEventListener("DOMContentLoaded", () => {
         fileUploadGroup.hidden = false;
     }
 
+
+    document.querySelectorAll(".existing-file-remove").forEach(button => {
+        console.log("파일 삭제 버튼 적용");
+        button.addEventListener("click", () => {
+
+            const fileId = button.dataset.fileId;
+
+            removeExistingFile(fileId);
+        });
+    });
+
+        // 기존 파일 용량
+    function getExistingFileTotalSize() {
+
+        const existingFiles =
+            document.querySelectorAll(
+                ".existing-file-item"
+            );
+
+        let total = 0;
+
+        existingFiles.forEach(file => {
+
+            if (file.dataset.deleted !== "true") {
+
+                total += Number(file.dataset.fileSize);
+            }
+        });
+
+        return total;
+    }
+    // 기존 파일 삭제 버튼
+    function removeExistingFile(fileId) {
+        console.log(fileId);
+        
+        const fileItem = document.getElementById(
+                `existing-file-${fileId}`
+            );
+
+        if (!fileItem) {
+            return;
+        }
+
+        deletedFileIds.add(String(fileId));
+
+        fileItem.dataset.deleted = "true";
+
+        fileItem.style.display = "none";
+
+        updateDeletedFileInputs();
+        updateFileInfo();
+    }
+    // 삭제 인풋 업데이트
+    function updateDeletedFileInputs() {
+
+        const container = document.getElementById("deletedFileIds");
+
+        if (!container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        deletedFileIds.forEach(fileId => {
+            const input = document.createElement("input");
+
+            input.type = "hidden";
+            input.name = "deletedFileIds";
+            input.value = fileId;
+
+            container.appendChild(input);
+        });
+    }
+
+// 수정 페이지에서 바로 이벤트 디스페치
+title.dispatchEvent(new Event("input"));
+content.dispatchEvent(new Event("input"));
 });
+

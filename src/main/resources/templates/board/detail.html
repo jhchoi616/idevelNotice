@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layout/header :: head('${board.title}')}"></head>
+<head th:replace="~{layout/header :: head(${board.title})}"></head>
 <head>
     <link rel="stylesheet" th:href="@{/css/detail.css}">
 </head>
@@ -94,54 +94,143 @@
         </div>
 
     </div>
+    <!-- 버튼 TODO 수정 해야함 -->
+<div class="board-buttons">
 
+    <!-- 목록 -->
+    <a th:href="@{/board/{category}(
+            category=${board.category.name().toLowerCase()}
+        )}">
+        목록
+    </a>
+
+    <!-- 작성자 본인에게만 표시 -->
+    <th:block sec:authorize="isAuthenticated()"
+              th:if="${board.writer.username == #authentication.name}">
+
+        <!-- 수정 -->
+        <a th:href="@{/board/{category}/{id}/edit(
+                category=${board.category.name().toLowerCase()},
+                id=${board.id}
+            )}">
+            수정
+        </a>
+
+        <!-- 삭제 -->
+        <form th:action="@{/board/{category}/{id}/delete(
+                    category=${board.category.name().toLowerCase()},
+                    id=${board.id}
+                )}"
+              method="post"
+              onsubmit="return confirm('정말 삭제하시겠습니까?');">
+
+            <button type="submit">
+                삭제
+            </button>
+
+        </form>
+
+    </th:block>
+
+</div>
 
     <!-- ========================= -->
     <!-- 댓글 -->
     <!-- ========================= -->
 
-    <div class="comment-section">
+<div class="comment-list">
 
-        <h3>
-            댓글
-            <span th:text="${#lists.size(comments)}">0</span>
-        </h3>
+    <div class="comment-item"
+         th:each="comment : ${comments}">
 
+        <div class="comment-header">
 
-        <!-- 댓글 목록 -->
-        <div class="comment-list">
+            <div class="comment-member">
+                <strong th:text="${comment.member.nickname}">
+                    닉네임
+                </strong>
 
-            <div class="comment-item"
-                 th:each="comment : ${comments}">
-
-                <div class="comment-header">
-
-                    <strong th:text="${comment.writer.nickname}">
-                        닉네임
-                    </strong>
-
-                    <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">
-                        2026-09-09 19:00
-                    </span>
-
-                </div>
-
-                <div class="comment-content"
-                     th:text="${comment.content}">
-                    댓글 내용
-                </div>
-
+                <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">
+                    2026-09-09 19:00
+                </span>
             </div>
 
+            <!-- 본인 댓글인 경우 -->
+            <div class="comment-actions"
+                 sec:authorize="isAuthenticated()"
+                 th:if="${comment.member.username == #authentication.name}">
 
-            <!-- 댓글이 없는 경우 -->
-            <div th:if="${#lists.isEmpty(comments)}"
-                 class="no-comment">
-                아직 댓글이 없습니다.
+                <button type="button"
+                        class="comment-edit-btn"
+                        onclick="editComment(this)">
+                    수정
+                </button>
+
+                <form th:action="@{/board/{category}/{id}/comment/{commentId}/delete(
+                            category=${board.category.name().toLowerCase()},
+                            id=${board.id},
+                            commentId=${comment.id}
+                        )}"
+                      method="post"
+                      onsubmit="return confirm('댓글을 삭제하시겠습니까?');">
+
+                    <button type="submit"
+                            class="comment-delete-btn">
+                        삭제
+                    </button>
+
+                </form>
+
             </div>
 
         </div>
 
+
+        <!-- 댓글 내용 -->
+        <div class="comment-content"
+             th:text="${comment.content}">
+            댓글 내용
+        </div>
+
+
+        <!-- 댓글 수정 영역 -->
+        <form class="comment-edit-form"
+              style="display: none;"
+              th:action="@{/board/{category}/{id}/comment/{commentId}/edit(
+                          category=${board.category.name().toLowerCase()},
+                          id=${board.id},
+                          commentId=${comment.id}
+                      )}"
+              method="post">
+
+            <textarea name="content"
+                      maxlength="300"
+                      th:text="${comment.content}"></textarea>
+
+            <div class="comment-edit-buttons">
+
+                <button type="submit">
+                    저장
+                </button>
+
+                <button type="button"
+                        onclick="cancelCommentEdit(this)">
+                    취소
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <div th:if="${#lists.isEmpty(comments)}"
+         class="no-comment">
+        아직 댓글이 없습니다.
+    </div>
+
+</div>
 
         <!-- 댓글 작성 -->
         <div class="comment-write"
@@ -192,5 +281,28 @@
 
 </div>
 <footer th:replace="~{layout/footer :: footer}"></footer>
+<script>
+    function editComment(button) {
+        const commentItem = button.closest('.comment-item');
+
+        const content = commentItem.querySelector('.comment-content');
+        const editForm = commentItem.querySelector('.comment-edit-form');
+
+        content.style.display = 'none';
+        editForm.style.display = 'block';
+
+        editForm.querySelector('textarea').focus();
+    }
+
+    function cancelCommentEdit(button) {
+        const commentItem = button.closest('.comment-item');
+
+        const content = commentItem.querySelector('.comment-content');
+        const editForm = commentItem.querySelector('.comment-edit-form');
+
+        editForm.style.display = 'none';
+        content.style.display = 'block';
+    }
+</script>
 </body>
 </html>

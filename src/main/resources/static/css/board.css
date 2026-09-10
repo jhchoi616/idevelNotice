@@ -96,7 +96,7 @@ a {
 .section-heading h2,
 .featured-header h2,
 .board-card h2,
-.notice-header h2 {
+.resource-header h2 {
     margin: 0;
 
     font-size: 24px;
@@ -296,7 +296,7 @@ a {
 
 .issue-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
 
     background: var(--surface);
 
@@ -641,7 +641,7 @@ a {
    Notice
    ========================================================= */
 
-.notice-section {
+.resource-section {
     padding: 30px 32px;
 
     background: #ffffff;
@@ -653,7 +653,8 @@ a {
     box-shadow: var(--shadow-sm);
 }
 
-.notice-header {
+
+.resource-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -663,41 +664,41 @@ a {
     border-bottom: 1px solid var(--border-light);
 }
 
-.notice-title {
+
+.resource-title {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 
     gap: 14px;
 }
 
-.notice-icon {
+.resource-icon {
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    width: 34px;
-    height: 34px;
+    width: 68px;
+    height: 68px;
 
     color: #ffffff;
-
     background: var(--primary);
 
-    border-radius: 9px;
+    border-radius: 10px;
 
-    font-size: 14px;
+    font-size: 28px;
     font-weight: 700;
+    line-height: 1;
 }
 
-.notice-header h2 {
-    font-size: 19px;
-}
 
-.notice-list {
+
+.resource-list {
     display: grid;
 }
 
-.notice-item {
+
+.resource-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -709,25 +710,34 @@ a {
     font-size: 13px;
 }
 
-.notice-item:last-child {
+
+.resource-item:last-child {
     border-bottom: none;
 }
 
-.notice-item:hover strong {
+
+.resource-item:hover strong {
     color: var(--primary);
 }
 
-.notice-item time {
+
+.resource-item time {
     color: var(--text-muted);
 
     font-size: 12px;
 }
-.empty-home{
-    padding:20px;
+
+
+.empty-home {
+    padding: 20px;
 }
-.mini-empty{
-    padding:10px;
+
+
+.mini-empty {
+    padding: 10px;
 }
+
+
 /* =========================================================
    Responsive
    ========================================================= */
@@ -805,13 +815,13 @@ a {
         padding: 24px;
     }
 
-    .notice-section {
+    .resource-section {
         padding: 24px;
     }
 
 
-    /* 게시판 제목 및 아이콘 등 모바일 화면일 때 수정  */
-     .board-card-title {
+    /* 게시판 제목 및 아이콘 등 모바일 화면일 때 수정 */
+    .board-card-title {
         font-size: 30px;
     }
 

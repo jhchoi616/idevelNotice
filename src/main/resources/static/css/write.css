@@ -70,9 +70,12 @@
 /* 내용 */
 
 .form-group textarea {
+    height: 350px;
     min-height: 350px;
-    resize: vertical;
+    max-height: 350px;
+    resize: none;
     line-height: 1.6;
+    
 }
 
 

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
@@ -17,6 +18,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByCategoryOrderByCreatedAtDesc(
         BoardCategory category,
         Pageable pageable
+    );
+    /**
+     * 최근 24시간 이내 전체 카테고리 인기 4등 게시글
+     */
+    List<Board> findTop4ByCreatedAtAfterOrderByViewCountDescCreatedAtDesc(
+    LocalDateTime dateTime
     );
     /**
      * 특정 게시판의 인기 게시글

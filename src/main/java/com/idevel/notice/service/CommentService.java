@@ -85,11 +85,54 @@ public class CommentService {
                         )
                 );
     }
-
+// 댓글 삭제
     @Transactional
-    public void delete(Long commentId) {
-        Comment comment = findById(commentId);
+    public void deleteComment(
+        Long commentId,
+        String username
+) {
+    Comment comment = commentRepository.findById(commentId)
+            .orElseThrow(() ->
+                    new IllegalArgumentException("존재하지 않는 댓글입니다.")
+            );
 
-        commentRepository.delete(comment);
+    // 작성자 확인
+    if (!comment.getMember().getUsername().equals(username)) {
+        throw new IllegalArgumentException("댓글 삭제 권한이 없습니다.");
     }
+
+    commentRepository.delete(comment);
+}
+
+// 업데이트 코멘트
+        @Transactional 
+        public void updateComment(
+                Long commentId,
+                String content,
+                String username
+        ) {
+            Comment comment = commentRepository.findById(commentId)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("존재하지 않는 댓글입니다.")
+                    );
+                    
+
+            // 작성자 확인
+            if (!comment.getMember().getUsername().equals(username)) {
+                throw new IllegalArgumentException("댓글 수정 권한이 없습니다.");
+            }
+
+            if (content == null || content.isBlank()) {
+                throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
+            }
+
+            if (content.length() > 300) {
+                throw new IllegalArgumentException(
+                        "댓글은 300자까지 입력할 수 있습니다."
+                );
+            }
+
+            comment.update(content);
+        }
+
 }

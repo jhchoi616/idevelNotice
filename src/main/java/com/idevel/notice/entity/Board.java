@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "board")
@@ -87,4 +89,30 @@ public class Board {
     this.viewCount++;
     }
 
+    public void update(String title, String content) {
+    this.title = title;
+    this.content = content;
+    }
+
+    public void updateCategory(BoardCategory category){
+        this.category = category;
+    }
+
+
+    // 종속 관계 cascade 지정
+    @OneToMany(
+        mappedBy = "board",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(
+        mappedBy = "board",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<BoardFile> files = new ArrayList<>();
 }
