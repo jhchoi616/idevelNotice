@@ -34,11 +34,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     );
 
     /**
-     * 여러 게시판에서 인기 게시글 조회
+     * 전체 게시판에서 인기 게시글 조회
      * NOTICE를 제외한 인기글 등에 사용
      */
-    Page<Board> findByCategoryInOrderByViewCountDescCreatedAtDesc(
-        List<BoardCategory> categories,
+    Page<Board> findAllByOrderByViewCountDescCreatedAtDesc(
         Pageable pageable
     );
 
@@ -49,6 +48,14 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
         BoardCategory category,
         String keyword,
         Pageable pageable
+    );
+    /**
+     * 내용에 검색어가 포함된 게시글
+     */
+    Page<Board> findByCategoryAndContentContainingIgnoreCaseOrderByCreatedAtDesc(
+            BoardCategory category,
+            String keyword,
+            Pageable pageable
     );
 
     /**

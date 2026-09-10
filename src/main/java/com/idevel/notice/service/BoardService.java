@@ -51,30 +51,90 @@ public class BoardService {
         );
     });
     }
-
-    public Page<Board> searchBoards(
+//     제목 검색
+     public Page<BoardListDto> searchTitleBoards(
             BoardCategory category,
             String keyword,
             Pageable pageable
     ) {
-        return boardRepository.search(
+        Page<Board> boards = boardRepository.findByCategoryAndTitleContainingIgnoreCaseOrderByCreatedAtDesc(
                 category,
                 keyword,
                 pageable
         );
+        return boards.map(board -> {
+
+        int commentCount =
+                (int) commentRepository.countByBoardId(board.getId());
+
+        return new BoardListDto(
+                board,
+                commentCount
+        );   });
     }
-
-    public Page<Board> findPopularBoards(Pageable pageable) {
-        List<BoardCategory> categories = List.of(
-                BoardCategory.FREE,
-                BoardCategory.QUESTION,
-                BoardCategory.INFO
-        );
-
-        return boardRepository.findByCategoryInOrderByViewCountDescCreatedAtDesc(
-                categories,
+//     내용 검색
+     public Page<BoardListDto> searchContentBoards(
+            BoardCategory category,
+            String keyword,
+            Pageable pageable
+    ) {
+        Page<Board> boards = boardRepository.findByCategoryAndContentContainingIgnoreCaseOrderByCreatedAtDesc(
+                category,
+                keyword,
                 pageable
         );
+        return boards.map(board -> {
+
+        int commentCount =
+                (int) commentRepository.countByBoardId(board.getId());
+
+        return new BoardListDto(
+                board,
+                commentCount
+        );   });
+    }
+
+//     제목이랑 내용 검색
+    public Page<BoardListDto> searchBoards(
+            BoardCategory category,
+            String keyword,
+            Pageable pageable
+    ) {
+        Page<Board> boards = boardRepository.search(
+                category,
+                keyword,
+                pageable
+        );
+        return boards.map(board -> {
+
+        int commentCount =
+                (int) commentRepository.countByBoardId(board.getId());
+
+        return new BoardListDto(
+                board,
+                commentCount
+        );   });
+    }
+    
+// 전체 인기글 리스트 조회
+    public Page<BoardListDto> findPopularBoards(Pageable pageable) {
+        // List<BoardCategory> categories = List.of(
+        //         BoardCategory.FREE,
+        //         BoardCategory.QUESTION,
+        //         BoardCategory.INFO
+        // );
+Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
+                pageable
+        );
+        return boards.map(board -> {
+
+        int commentCount =
+                (int) commentRepository.countByBoardId(board.getId());
+
+        return new BoardListDto(
+                board,
+                commentCount
+        );   });
     }
 
     public Board findById(Long boardId) {

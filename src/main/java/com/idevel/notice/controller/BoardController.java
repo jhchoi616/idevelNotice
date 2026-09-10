@@ -45,25 +45,55 @@ public class BoardController {
         return "board/write";
     }
 
-    @GetMapping("/{category}")
-    public String board(
+
+@GetMapping("/{category}")
+public String board(
         @PathVariable("category") String category,
-         @PageableDefault ( size = 10, sort = "createdAt", direction = Sort.Direction.DESC ) Pageable pageable, 
+        @RequestParam(name="type", defaultValue = "all") String type,
+        @RequestParam(name="keyword", defaultValue = "") String keyword,
+        @PageableDefault(
+                size = 10,
+                sort = "createdAt",
+                direction = Sort.Direction.DESC
+        ) Pageable pageable,
+
         Model model
-    ) {
-        
-        BoardCategory boardCategory = BoardCategory.from(category);
-        Page<BoardListDto> boardPage =boardService.findBoards(boardCategory, pageable);
-        System.out.println("조회 카테고리 = "+category);
-        System.out.println("조회 카테고리2 = "+boardCategory);
-        model.addAttribute("category", boardCategory);
-        model.addAttribute("boards",boardPage.getContent());
-        model.addAttribute("page",boardPage);
+) {
 
+    BoardCategory boardCategory = BoardCategory.from(category);
 
-        return "board/list";
+    Page<BoardListDto> boardPage;
+    if("popular".equals(category)){
+        boardPage = boardService.findPopularBoards(pageable);
+    }else{
+
+        if ("all".equals(type)) {
+            boardPage = boardService.searchBoards(
+                boardCategory,
+                keyword,
+                pageable
+            );
+    } else if ("title".equals(type)) {
+        boardPage = boardService.searchTitleBoards(
+            boardCategory,
+                keyword,
+                pageable
+            );
+        }else{
+        boardPage = boardService.searchContentBoards(boardCategory,keyword, pageable);
     }
+}
+    
+    System.out.println("조회 카테고리 = " + category);
+    System.out.println("조회 카테고리2 = " + boardCategory);
 
+    model.addAttribute("category", boardCategory);
+    model.addAttribute("boards", boardPage.getContent());
+    model.addAttribute("page", boardPage);
+
+    return "board/list";
+}
+    
     @GetMapping("/{category}/{id}")
     public String detail(
             @PathVariable("category") String category,

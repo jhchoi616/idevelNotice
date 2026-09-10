@@ -7,6 +7,7 @@ public enum BoardCategory {
     FREE("free", "자유게시판"),
     QUESTION("question", "질문게시판"),
     INFO("info", "정보게시판"),
+    POPULAR("popular", "인기글"),
     DATA("data", "자료실");
 
         private final String value;
