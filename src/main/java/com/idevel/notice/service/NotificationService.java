@@ -9,8 +9,10 @@ import com.idevel.notice.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +66,8 @@ public class NotificationService {
     public Notification findById(Long notificationId) {
         return notificationRepository.findById(notificationId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException(
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
                                 "알림을 찾을 수 없습니다."
                         )
                 );

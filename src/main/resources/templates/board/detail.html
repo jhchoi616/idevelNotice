@@ -201,11 +201,13 @@
                           id=${board.id},
                           commentId=${comment.id}
                       )}"
+                      onsubmit="return checkCommentWhite(this)"
               method="post">
-
+            <div name="comment-err" class="none comment-danger">댓글은 공백만 입력할 수 없습니다.</div>
             <textarea name="content"
-                      maxlength="300"
-                      th:text="${comment.content}"></textarea>
+                      maxlength="100"
+                      minlength="1"
+                      th:text="${comment.content}" required></textarea>
 
             <div class="comment-edit-buttons">
 
@@ -240,11 +242,13 @@
                         category=${board.category.name().toLowerCase()},
                         id=${board.id}
                     )}"
+                    onsubmit="return checkCommentWhite(this)"
                   method="post">
-
+<div name="comment-err" class="none comment-danger">댓글은 공백만 입력할 수 없습니다.</div>
                 <textarea name="content"
-                          maxlength="300"
-                          placeholder="댓글을 입력해주세요."></textarea>
+                          maxlength="100"
+                          minlength="1"
+                          placeholder="댓글을 입력해주세요." required></textarea>
 
                 <button type="submit">
                     댓글 등록
@@ -282,6 +286,18 @@
 </div>
 <footer th:replace="~{layout/footer :: footer}"></footer>
 <script>
+    function checkCommentWhite(form){
+        let content = form.content;
+        content.value = content.value.trim();
+        console.log(content);
+        if(!content.value){
+            this.comment_err.classList.toggle("none");
+            content.focus();
+            return false;
+        }
+        this.comment_err.classList.add("none");
+        return true;
+    }
     function editComment(button) {
         const commentItem = button.closest('.comment-item');
 

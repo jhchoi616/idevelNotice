@@ -6,9 +6,11 @@ import com.idevel.notice.repository.BoardFileRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -68,7 +70,8 @@ public class BoardFileService {
             }
 
             if (file.getSize() > MAX_FILE_SIZE) {
-                throw new IllegalArgumentException(
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
                         "파일당 최대 10MB까지 업로드할 수 있습니다."
                 );
             }
@@ -77,7 +80,8 @@ public class BoardFileService {
         }
 
         if (totalSize > MAX_TOTAL_SIZE) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
                     "전체 파일 용량은 20MB를 초과할 수 없습니다."
             );
         }
@@ -170,7 +174,8 @@ public class BoardFileService {
         }
 
         if (!allowed) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
                     "JPG, JPEG, PNG, GIF, WEBP 이미지만 업로드할 수 있습니다."
             );
         }
@@ -183,7 +188,8 @@ public class BoardFileService {
     private String getExtension(String fileName) {
 
         if (fileName == null || fileName.isBlank()) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "파일 이름이 올바르지 않습니다."
             );
         }
@@ -191,7 +197,8 @@ public class BoardFileService {
         int index = fileName.lastIndexOf('.');
 
         if (index == -1) {
-            throw new IllegalArgumentException(
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "확장자가 없는 파일은 업로드할 수 없습니다."
             );
         }
@@ -208,7 +215,8 @@ public class BoardFileService {
     public BoardFile findById(Long fileId) {
         return boardFileRepository.findById(fileId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("첨부파일을 찾을 수 없습니다.")
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"첨부파일을 찾을 수 없습니다.")
                 );
     }
 
@@ -299,7 +307,8 @@ public void updateFiles(
             }
 
             if (file.getSize() > MAX_FILE_SIZE) {
-                throw new IllegalArgumentException(
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
                         "파일당 최대 10MB까지 업로드할 수 있습니다."
                 );
             }
@@ -317,7 +326,8 @@ public void updateFiles(
      */
     if (totalSize > MAX_TOTAL_SIZE) {
 
-        throw new IllegalArgumentException(
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
                 "전체 파일 용량은 20MB를 초과할 수 없습니다."
         );
     }

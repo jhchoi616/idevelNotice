@@ -12,9 +12,11 @@ import com.idevel.notice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -139,9 +141,7 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
 
     public Board findById(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("게시글을 찾을 수 없습니다.")
-                );
+                .orElseThrow(() ->  new ResponseStatusException( HttpStatus.NOT_FOUND, "존재하지 않는 게시글 입니다." ));
     }
 
     @Transactional
@@ -166,16 +166,35 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
          */
         Member writer = memberRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("존재하지 않는 회원입니다.")
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"존재하지 않는 회원입니다.")
                 );
 
+        if (title == null || title.isBlank()) {
+        throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"제목을 입력해주세요.");
+    }
 
+    if (title.length() > 10) {
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,"제목은 10자까지 입력할 수 있습니다.");
+    }
+
+    if (content == null || content.isBlank()) {
+        throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"내용을 입력해주세요.");
+    }
+        String normalizedContent = content.replace("\r\n", "\n").replace("\r", "\n");;
+    if (normalizedContent.length() > 300) {
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,"본문은 300자를 초과할 수 없습니다.");
+    }
         /*
          * 게시글 생성
          */
         Board board = new Board(
                 title,
-                content,
+                normalizedContent,
                 writer,
                 category
         );
@@ -227,30 +246,36 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
         
     Board board = boardRepository.findById(id)
             .orElseThrow(() ->
-                    new IllegalArgumentException("존재하지 않는 게시글입니다.")
+                    new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"존재하지 않는 게시글입니다.")
             );
 
     // 작성자 본인인지 확인
     if (!board.getWriter().getUsername().equals(username)) {
-        throw new IllegalArgumentException("수정 권한이 없습니다.");
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,"수정 권한이 없습니다.");
     }
 
     if (title == null || title.isBlank()) {
-        throw new IllegalArgumentException("제목을 입력해주세요.");
+        throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"제목을 입력해주세요.");
     }
 
     if (title.length() > 10) {
-        throw new IllegalArgumentException("제목은 10자까지 입력할 수 있습니다.");
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,"제목은 10자까지 입력할 수 있습니다.");
     }
 
     if (content == null || content.isBlank()) {
-        throw new IllegalArgumentException("내용을 입력해주세요.");
+        throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"내용을 입력해주세요.");
     }
-
-    if (content.length() > 300) {
-        throw new IllegalArgumentException("현재 앞단의 300자와 뒷단의 300자 기준 맞추는 중입니다. 뒷단 기준 내용은 300자를 초과했습니다.");
+        String normalizedContent = content.replace("\r\n", "\n").replace("\r", "\n");;
+    if (normalizedContent.length() > 300) {
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,"본문은 300자를 초과할 수 없습니다.");
     }
-
+    board.setContent(normalizedContent);
     //여기서 수정 전 카테고리 및 파일 처리 여부 결정
     BoardCategory oldCategory = board.getCategory();
 
@@ -290,12 +315,14 @@ System.out.println("파일 없는 경우에도 여기는 들어오는데");
 
     Board board = boardRepository.findById(id)
             .orElseThrow(() ->
-                    new IllegalArgumentException("존재하지 않는 게시글입니다.")
+                    new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"존재하지 않는 게시글입니다.")
             );
 
     // 작성자 본인인지 확인
     if (!board.getWriter().getUsername().equals(username)) {
-        throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,"삭제 권한이 없습니다.");
     }
 
      for (BoardFile file : board.getFiles()) {
@@ -306,7 +333,8 @@ System.out.println("파일 없는 경우에도 여기는 들어오는데");
             Files.deleteIfExists(path);
 
         } catch (IOException e) {
-            throw new IllegalStateException(
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
                     "첨부파일 삭제에 실패했습니다.", e
             );
         }

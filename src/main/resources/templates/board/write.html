@@ -7,6 +7,9 @@
 <head>
     <link rel="stylesheet" th:href="@{/css/write.css}">
     <script th:src="@{/js/board-write.js}" defer></script>
+    <style>
+        body { overflow-anchor: none; }
+    </style>
 </head>
 
 <body>
@@ -88,7 +91,7 @@
             <div class="form-group">
 
                 <label for="content">내용</label> 
-                <textarea id="content" name="content" maxlength="300" placeholder="내용을 입력해주세요. (최대 300자)" th:text="${board != null ? board.content : ''}" required></textarea>
+                <textarea id="content" name="content" maxlength="300" placeholder="내용을 입력해주세요. (최대 300자)" th:text="${board != null ? board.content : ''}" th:attrappend="autofocus=${board != null ? 'autofocus' : null}" required></textarea>
                 <div class="input-info"> <span id="contentMessage"></span> <span> <strong id="contentCount">0</strong> / 300 </span> </div>
 
             </div>

@@ -197,15 +197,15 @@
                             게시글 제목
                         </h3>
 
-                        <p th:text="${board.content != null && board.content.length() > 15 
-        ? board.content.substring(0, 15) + '...' 
+                        <p th:text="${board.content != null && board.content.length() > 30 
+        ? board.content.substring(0, 30) + '...' 
         : board.content}">
                             게시글 내용
                         </p>
 
                         <span class="post-meta">
 
-                            <span th:text="${board.writer}">
+                            <span th:text="${board.writer.nickname}">
                                 홍길동
                             </span>
 

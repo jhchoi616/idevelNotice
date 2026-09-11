@@ -2,6 +2,9 @@ package com.idevel.notice.entity;
 
 import java.util.Arrays;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 public enum BoardCategory {
 
     FREE("free", "자유게시판"),
@@ -29,7 +32,7 @@ public enum BoardCategory {
         return Arrays.stream(values())
                 .filter(category -> category.value.equalsIgnoreCase(value))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시판입니다."));
+                .orElseThrow(() ->  new ResponseStatusException( HttpStatus.NOT_FOUND, "존재하지 않는 카테고리 입니다." ));
         }
     
 }

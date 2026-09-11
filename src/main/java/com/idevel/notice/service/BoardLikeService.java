@@ -5,8 +5,11 @@ import com.idevel.notice.entity.BoardLike;
 import com.idevel.notice.entity.Member;
 import com.idevel.notice.repository.BoardLikeRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +36,9 @@ public class BoardLikeService {
                 board.getId(),
                 member.getId()
         )) {
-            throw new IllegalStateException("이미 좋아요를 눌렀습니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "이미 좋아요를 눌렀습니다.");
         }
 
         BoardLike boardLike = new BoardLike(
@@ -53,7 +58,8 @@ public class BoardLikeService {
                         member.getId()
                 )
                 .orElseThrow(() ->
-                        new IllegalStateException("좋아요를 누르지 않았습니다.")
+                        new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"좋아요를 누른 게시글이 아닙니다.")
                 );
 
         boardLikeRepository.delete(boardLike);

@@ -101,7 +101,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-
+    // 그냥 스크롤할때 활성화된 요소가 textarea면 focus blur처리
+addEventListener('scroll',()=>{
+    if(document.activeElement==content)content.blur()
+})
     /*
      * 본문 글자 수
      */

@@ -5,9 +5,12 @@ import com.idevel.notice.dto.MemberUpdateRequest;
 import com.idevel.notice.entity.Member;
 import com.idevel.notice.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,21 +23,24 @@ public class MemberService {
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("회원을 찾을 수 없습니다.")
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"회원을 찾을 수 없습니다.")
                 );
     }
 
     public Member findByUsername(String username) {
         return memberRepository.findByUsername(username)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("회원을 찾을 수 없습니다.")
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"회원을 찾을 수 없습니다.")
                 );
     }
 
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("회원을 찾을 수 없습니다.")
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"회원을 찾을 수 없습니다.")
                 );
     }
 
@@ -56,11 +62,13 @@ public class MemberService {
     
 
         if (memberRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalStateException("이미 사용 중인 아이디입니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"이미 사용 중인 아이디입니다.");
         }
 
         if (memberRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"이미 사용 중인 이메일입니다.");
         }
 
         String encodedPassword =
@@ -87,7 +95,8 @@ public class MemberService {
         if (!member.getEmail().equals(request.getEmail())
                 && memberRepository.existsByEmail(request.getEmail())) {
 
-            throw new IllegalStateException("이미 사용 중인 이메일입니다.");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,"이미 사용 중인 이메일입니다.");
         }
         System.out.println("=========================내정보 수정 : " + request.getNickname());
         System.out.println("? 내정보 수정 여기 옴??" + request.getEmail());

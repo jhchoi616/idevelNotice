@@ -1,18 +1,19 @@
 package com.idevel.notice.controller;
 
-
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.RequiredArgsConstructor;
@@ -106,13 +107,19 @@ public String board(
     try {
         boardCategory = BoardCategory.valueOf(category.toUpperCase());
     } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("존재하지 않는 게시판입니다.");
+        throw new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+         "존재하지 않는 게시글입니다."
+        );
     }
 
     Board board = boardService.findByIdAndIncreaseViewCount(id);
 
     if (board.getCategory() != boardCategory) {
-        throw new IllegalArgumentException("잘못된 게시글 주소입니다.");
+        throw new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+         "카테고리가 맞지 않아 찾을 수 없습니다."
+        );
     }
 
     model.addAttribute("board", board);
@@ -143,11 +150,17 @@ public String board(
 
             Authentication authentication
     ) {
-
+        String normalizedContent = content.replace("\r\n", "\n").replace("\r", "\n");
+        if(normalizedContent.replace("\n","").trim().isEmpty()){
+         throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+         "비정상적인 요청입니다. 본문에 공란을 입력할 수 없습니다."
+        );
+        }
         Board board = boardService.write(
                 category,
                 title,
-                content,
+                normalizedContent,
                 authentication.getName(),
                 files
         );
@@ -164,6 +177,12 @@ public String writeComment(
         @RequestParam("content") String content,
         Authentication authentication
 ) {
+    if(content.trim().isEmpty()){
+        throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+         "비정상적인 요청입니다. 댓글에 공란을 입력할 수 없습니다."
+    );
+    }
 CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 Member member = userDetails.getMember();
 
@@ -190,12 +209,18 @@ public String editForm(
     Board board = boardService.findById(id);
 
     if (!board.getCategory().name().equalsIgnoreCase(category)) {
-        throw new IllegalArgumentException("잘못된 게시글 주소입니다.");
+        throw new ResponseStatusException(
+        HttpStatus.NOT_FOUND,
+         "존재하지 않는 게시글입니다."
+        );
     }
 
     if (!board.getWriter().getUsername()
             .equals(authentication.getName())) {
-        throw new IllegalArgumentException("수정 권한이 없습니다.");
+        throw new ResponseStatusException(
+        HttpStatus.FORBIDDEN,
+         "비정상적인 요청입니다. 수정 권한이 없습니다."
+        );
     }
 
     model.addAttribute("board", board);

@@ -107,7 +107,7 @@
 
                 </td>
 
-                <td th:text="${board.nickname}">
+                <td th:text="${board.nickname.length()>10 ? board.nickname.substring(0,10)+'...' : board.nickname}">
                     작성자
                 </td>
 

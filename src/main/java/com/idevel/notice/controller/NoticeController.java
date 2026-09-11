@@ -20,7 +20,7 @@ public class NoticeController {
 
     @GetMapping({"/", "/index"})
     public String home(Model model) {
-        model.addAttribute("frees",boardRepository.findByCategoryOrderByCreatedAtDesc(BoardCategory.FREE,PageRequest.of(0, 5)));
+        model.addAttribute("frees",boardRepository.findByCategoryOrderByCreatedAtDesc(BoardCategory.FREE,PageRequest.of(0, 3)));
         model.addAttribute("questions",boardRepository.findByCategoryOrderByCreatedAtDesc(
     BoardCategory.QUESTION,
     PageRequest.of(0, 3)

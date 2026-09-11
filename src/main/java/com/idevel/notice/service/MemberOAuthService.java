@@ -4,8 +4,11 @@ import com.idevel.notice.entity.MemberOAuth;
 import com.idevel.notice.entity.OAuthProvider;
 import com.idevel.notice.repository.MemberOAuthRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,8 @@ public class MemberOAuthService {
         return memberOAuthRepository
                 .findByProviderAndProviderId(provider, providerId)
                 .orElseThrow(() ->
-                        new IllegalArgumentException("OAuth 계정을 찾을 수 없습니다.")
+                        new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,"OAuth 계정을 찾을 수 없습니다.")
                 );
     }
 

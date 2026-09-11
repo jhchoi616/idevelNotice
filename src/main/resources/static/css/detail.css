@@ -390,6 +390,26 @@
     color: #343a40;
 }
 
+/* 댓글 공란 입력 경고 */
+.comment-danger {
+    margin-top: 6px;
+    padding: 0 2px;
+    color: #e03131;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.comment-danger::before {
+    content: "⚠ ";
+    font-size: 11px;
+}
+
+
+/* 숨김 */
+
+.comment-danger.none {
+    display: none;
+}
 
 /* 댓글 수정 */
 
