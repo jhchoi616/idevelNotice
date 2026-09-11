@@ -291,7 +291,7 @@
         content.value = content.value.trim();
         console.log(content);
         if(!content.value){
-            this.comment_err.classList.toggle("none");
+            this.comment_err.classList.remove("none");
             content.focus();
             return false;
         }

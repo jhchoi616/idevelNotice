@@ -177,7 +177,7 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
 
     if (title.length() > 10) {
         throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,"제목은 10자까지 입력할 수 있습니다.");
+                    HttpStatus.BAD_REQUEST,"제목은 10자까지 입력할 수 있습니다.");
     }
 
     if (content == null || content.isBlank()) {
@@ -187,7 +187,7 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
         String normalizedContent = content.replace("\r\n", "\n").replace("\r", "\n");;
     if (normalizedContent.length() > 300) {
         throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,"본문은 300자를 초과할 수 없습니다.");
+                    HttpStatus.BAD_REQUEST,"본문은 300자를 초과할 수 없습니다.");
     }
         /*
          * 게시글 생성
@@ -263,7 +263,7 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
 
     if (title.length() > 10) {
         throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,"제목은 10자까지 입력할 수 있습니다.");
+                    HttpStatus.BAD_REQUEST,"제목은 10자까지 입력할 수 있습니다.");
     }
 
     if (content == null || content.isBlank()) {
@@ -273,7 +273,7 @@ Page<Board> boards = boardRepository.findAllByOrderByViewCountDescCreatedAtDesc(
         String normalizedContent = content.replace("\r\n", "\n").replace("\r", "\n");;
     if (normalizedContent.length() > 300) {
         throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,"본문은 300자를 초과할 수 없습니다.");
+                    HttpStatus.BAD_REQUEST,"본문은 300자를 초과할 수 없습니다.");
     }
     board.setContent(normalizedContent);
     //여기서 수정 전 카테고리 및 파일 처리 여부 결정

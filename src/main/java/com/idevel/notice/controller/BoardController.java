@@ -177,9 +177,9 @@ public String writeComment(
         @RequestParam("content") String content,
         Authentication authentication
 ) {
-    if(content.trim().isEmpty()){
+    if(content.replace("\r","").replace("\n","").trim().isEmpty()){
         throw new ResponseStatusException(
-        HttpStatus.FORBIDDEN,
+        HttpStatus.BAD_REQUEST,
          "비정상적인 요청입니다. 댓글에 공란을 입력할 수 없습니다."
     );
     }
