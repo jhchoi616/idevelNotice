@@ -1,11 +1,14 @@
 package com.idevel.notice.service;
 
+import com.idevel.notice.dto.CommentDto;
 import com.idevel.notice.entity.Board;
 import com.idevel.notice.entity.Comment;
 import com.idevel.notice.entity.Member;
 import com.idevel.notice.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +22,26 @@ import java.util.List;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-
+        // 댓글 전체 조회
     public List<Comment> findByBoardId(Long boardId) {
         return commentRepository.findByBoardIdOrderByCreatedAtAsc(boardId);
     }
+    
+        //     부모 댓글들만 조회
+        public Page<CommentDto> findParentComments( Long boardId, Pageable pageable) {
+            return commentRepository.findByBoardIdAndParentIsNull(boardId, pageable).map(CommentDto::new);
+        }
+        // 대댓글들만 조회
+        public Page<CommentDto> findReplies( Long boardId, Long commentId, Pageable pageable ) {
+        Comment parent = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResponseStatusException( HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."));
+
+        if (!parent.getBoard().getId().equals(boardId)) {
+                throw new ResponseStatusException( HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다." );
+        }
+
+                return commentRepository.findByParentId(commentId, pageable).map(CommentDto::new);
+        }
 
     public long countByBoardId(Long boardId) {
         return commentRepository.countByBoardId(boardId);

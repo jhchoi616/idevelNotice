@@ -96,14 +96,8 @@ public String board(
 }
     
     @GetMapping("/{category}/{id}")
-    public String detail(
-            @PathVariable("category") String category,
-            @PathVariable("id") Long id,
-            Model model
-    ) {
-
+    public String detail( @PathVariable("category") String category, @PathVariable("id") Long id, Model model ) {
         BoardCategory boardCategory;
-
     try {
         boardCategory = BoardCategory.valueOf(category.toUpperCase());
     } catch (IllegalArgumentException e) {
